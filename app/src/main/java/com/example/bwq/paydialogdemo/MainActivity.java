@@ -16,7 +16,11 @@ public class MainActivity extends AppCompatActivity {
         tv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new PayDialog(MainActivity.this).setData(20, 30)
+                new PayDialog(MainActivity.this)
+                        .setData(20, 30)
+                        .haveWXPay(false)
+                        .haveAliPay(true)
+                        .haveBalance(true)
                         .setListener(new PayDialog.OnPayClickListener() {
                             @Override
                             public void onPayClick(int payType) {

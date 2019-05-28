@@ -42,6 +42,10 @@ public class PayDialog extends Dialog implements View.OnClickListener {
     private double payMoney = 0;//支付金额
     private double balance = 0;//余额
 
+    private Boolean haveBalance = true;
+    private Boolean haveAliPay = true;
+    private Boolean haveWXPay = true;
+
     public PayDialog setListener(OnPayClickListener listener) {
         this.listener = listener;
         return this;
@@ -50,6 +54,21 @@ public class PayDialog extends Dialog implements View.OnClickListener {
     public PayDialog(@NonNull Context context) {
         super(context, R.style.ActionSheetDialogStyle);
         this.context = context;
+    }
+
+    public PayDialog haveBalance(Boolean haveBalance) {
+        this.haveBalance = haveBalance;
+        return this;
+    }
+
+    public PayDialog haveAliPay(Boolean haveAliPay) {
+        this.haveAliPay = haveAliPay;
+        return this;
+    }
+
+    public PayDialog haveWXPay(Boolean haveWXPay) {
+        this.haveWXPay = haveWXPay;
+        return this;
     }
 
     /**
@@ -99,6 +118,36 @@ public class PayDialog extends Dialog implements View.OnClickListener {
             rlBalancePay.setClickable(false);
             rbBalancePay.setEnabled(false);
         }
+        if (!haveWXPay) {
+            rlWxPay.setVisibility(View.GONE);
+            rbWxPay.setChecked(false);
+            rbAliPay.setChecked(true);
+            rbBalancePay.setChecked(false);
+        }
+        if (!haveAliPay) {
+            rlAliPay.setVisibility(View.GONE);
+            if (rlWxPay.getVisibility() == View.VISIBLE) {
+                rbWxPay.setChecked(true);
+                rbAliPay.setChecked(false);
+                rbBalancePay.setChecked(false);
+            } else {
+                rbWxPay.setChecked(false);
+                rbAliPay.setChecked(false);
+                rbBalancePay.setChecked(true);
+            }
+        }
+        if (!haveBalance) {
+            rlBalancePay.setVisibility(View.GONE);
+            if (rlWxPay.getVisibility() == View.VISIBLE && rlAliPay.getVisibility() == View.VISIBLE) {
+                rbWxPay.setChecked(true);
+                rbAliPay.setChecked(false);
+                rbBalancePay.setChecked(false);
+            } else if (rlAliPay.getVisibility() == View.VISIBLE && rlWxPay.getVisibility() == View.GONE) {
+                rbWxPay.setChecked(false);
+                rbAliPay.setChecked(true);
+                rbBalancePay.setChecked(false);
+            }
+        }
     }
 
     @Override
@@ -114,6 +163,9 @@ public class PayDialog extends Dialog implements View.OnClickListener {
             getWindow().setAttributes(params);
             getWindow().setGravity(Gravity.BOTTOM);
             setCanceledOnTouchOutside(true);
+        }
+        if (!haveWXPay&&!haveAliPay&&!haveBalance){
+            dismiss();
         }
     }
 
